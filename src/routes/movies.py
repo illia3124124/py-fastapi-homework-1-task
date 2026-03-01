@@ -37,18 +37,9 @@ async def list_movies(
     movies = movies_result.scalars().all()
 
     base_url = "/movies/"
-    prev_page_url = f"{base_url}?page={page - 1}&page_size={per_page}" if page > 1 else None
-    next_page_url = f"{base_url}?page={page + 1}&page_size={per_page}" if page < total_pages else None
-    if len(movies) == 0:
-        prev_page_url = None
-        next_page_url = None
+    prev_page_url = f"{base_url}?page={page - 1}&per_page={per_page}" if page > 1 else None
+    next_page_url = f"{base_url}?page={page + 1}&per_page={per_page}" if page < total_pages else None
 
-        raise HTTPException(
-            status_code=404,
-            detail={
-                "detail": "No movies found."
-            }
-        )
     return MovieListResponseSchema.model_validate(
         {
             "movies": movies,
