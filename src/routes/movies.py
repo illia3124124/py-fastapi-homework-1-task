@@ -1,3 +1,5 @@
+import stat
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -19,7 +21,7 @@ async def list_movies(
     Retrieve a paginated list of movies.
 
     - **page**: Page number (starting from 1)
-    - **page_size**: Number of items per page (max 100)
+    - **per_page**: Number of items per page (max 20)
 
     Returns a paginated list of movies with metadata about total pages and items.
     """
@@ -41,9 +43,12 @@ async def list_movies(
         prev_page_url = None
         next_page_url = None
 
-        return {
-            "detail": "No movies found."
-        }
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "detail": "No movies found."
+            }
+        )
     return MovieListResponseSchema.model_validate(
         {
             "movies": movies,
